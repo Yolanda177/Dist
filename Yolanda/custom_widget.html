@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../Yolanda/widget/css/AuthorWidget.css">
+  <title>Custom Widget</title>
+  
+  
+</head>
+
+<body>
+  <h1>Custom Widget</h1>
+  <hr>
+  <div id="authorContainer">
+  </div>
+  <!-- Config Dojo -->
+  <script>
+    var dojoConfig = {
+      async: true,
+      packages: [{
+        name: 'Yolanda',
+        location: location.pathname.replace(/\/[^/]*$/, '') + '/Yolanda'
+      }]
+    };
+  </script>
+  <!-- load dojo -->
+  <script src="../dojo/dojo.js">
+  </script>
+  <script>
+    require([
+      'dojo/request',
+      'dojo/dom',
+      'dojo/_base/array',
+      'Yolanda/AuthorWidget',
+      'dojo/domReady!'
+      ], function (request, dom, array, AuthorWidget) {
+        // Load up our authors
+        request('../Yolanda/data/authors.json', {
+          handleAs: 'json'
+        }).then(function (authors) {
+          // Get a reference to our container
+          var authorContainer = dom.byId('authorContainer');
+
+          arrayUtil.forEach(authors, function (author) {
+            // Create our widget and place it 
+            var widget = new AuthorWidget(author).placeAt(authorContainer);
+          });
+        })
+      });
+  </script>
+</body>
+
+</html>
