@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Counter</title>
+  <script>
+    var dojoConfig = {
+      async: true,
+      parseOnLoad: false,
+    };
+  </script>
+  <script src="../dojo/dojo.js">
+  </script>
+  <script>
+    require([
+       'dojo/dom',
+       'dojo/on',
+       'dojo/dom-prop',
+      'dojo/_base/declare',
+      'dojo/dom-construct',
+      'dojo/parser',
+      'dojo/ready',
+      'dijit/_WidgetBase',
+      
+      'dojo/domReady!'], function ( dom, on, domProp, declare, domConstruct, parser, ready, _WidgetBase) {
+        on(dom.byId('btn'), 'click', function() {
+            dom.byId("myDiv").innerHTML = "Welcome Dojo!";
+        });
+        var list = dom.byId("list");
+        domConstruct.create("li", { innerHTML: "one"}, list, "first");
+        
+        var txt1 = dom.byId("txt1");
+        var txt2 = dom.byId("txt2");
+        var txt1value=domProp.get(txt1,"value");
+        alert(txt1value)
+        domProp.set(txt2,"value","bbb");
+
+        declare('Changecolor', [_WidgetBase], {
+         
+          _i: "change",
+          buildRendering: function () {
+            // create the DOM for this widget
+            this.domNode = domConstruct.create('button', { innerHTML: this._i });
+          },
+          postCreate: function () {
+            // every time the user clicks the button, increment the counter
+            this.connect(this.domNode, 'onclick', 'increment');
+          },
+          increment: function () {
+             dom.byId(myDiv).style.color = "red";
+          }
+        });
+        ready(function () {
+          // Call the parser mannually so it runs after our widget is defined, and page has finished loading
+          parser.parse();
+        });
+      });
+  </script>
+</head>
+
+<body>
+  <h1>Counter</h1>
+  <hr>
+  <button id="btn">改变div内容</button>
+  <div id="myDiv">Hello,dojo</div>
+
+ <ul id="list">
+     <li id="two">Two</li>
+     <li id="three">Three</li>
+     <li id="four">Four</li>
+ </ul>
+ <input id="txt1" type="text" value="aaa">
+ <input id="txt2" type="text" value="aaa">
+ <span data-dojo-type="Counter"></span>
+</body>
+
+</html>

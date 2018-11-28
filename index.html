@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Custom Widget</title>
+  <link rel="stylesheet" href="AuthorWidget.css">
+  <script>
+    var dojoConfig = {
+      async: true,
+      packages: [{
+        name: 'demo',
+        location: location.pathname.replace(/\/[^/]*$/, '') + '/demo'
+      }]
+    };
+  </script>
+  <script src="/dojo/dojo.js">
+  </script>
+  <script>
+    require([
+      'dojo/request',
+      'dojo/dom',
+      'dojo/_base/array',
+      'demo/AuthorWidget',
+      'dojo/domReady!'], function (request, dom, array, AuthorWidget) {
+        // Load up our authors
+        request('../assets/linjy/data/authors.json', {
+          handleAs: 'json'
+        }).then(function (authors) {
+          // Get a reference to our container
+          var authorContainer = dom.byId('authorContainer');
+          array.forEach(authors, function (author) {
+            // Create our widget and place it 
+            var widget = new AuthorWidget(author).placeAt(authorContainer);
+          });
+        })
+      });
+  </script>
+</head>
+
+<body>
+  <h1>Custom Widget</h1>
+  <hr>
+  <div id="authorContainer">
+  </div>
+</body>
+
+</html>

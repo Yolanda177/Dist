@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link href="Slider.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <script src="../dojo/dojo.js" data-dojo-config="async: true"></script> 
+    <script>
+        require([
+            'dojo/_base/declare',
+            'dojo/parser',
+            'dojo/ready',
+            'dijit/_WidgetBase'
+        ], function( declare, parser, ready, _WidgetBase) {
+            declare("MyFirstBehavioralWidget", [_WidgetBase], {
+                //
+                
+            });
+            ready(function() {
+                //
+                parser.parse();
+            });
+        });
+    </script>
+    <span data-dojo-type="MyFirstBehavioralWidget">hi</span>
+</body>
+</html>
