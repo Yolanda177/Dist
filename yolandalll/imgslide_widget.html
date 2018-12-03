@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Slider Widget</title>
+    <script>
+      var baseUrl = "http://localhost:8080/Dojo1142tm"
+      var dojoConfig = {
+        async: true,
+        packages: [
+          {
+            name: "Yolanda",
+            location:
+              location.pathname.replace(/\/[^/]*$/, "") + "/Yolanda"
+          }
+        ]
+      };
+    </script>
+    <script src="http://localhost:8080/Dojo1142tm/dojo/dojo.js"></script>
+    <script>
+      require([
+        "dojo/dom",
+        "dojo/query",
+        "dojo/NodeList-manipulate",
+        "dojo/on",
+        "dijit/registry",
+        "dojo/parser",
+        "Yolanda/SliderWidget",
+        "dojo/ready",
+        "dojo/domReady!"
+      ], function(
+        dom,
+        query,
+        NodeListManipulate,
+        on,
+        registry,
+        parser,
+        SliderWidget,
+        ready
+      ) {
+        ready(function() {
+          var sliderImgs = [
+          "https://www.12306.cn/index/images/pic/banner09.jpg",
+          "https://www.12306.cn/index/images/pic/banner08.jpg",
+          "https://www.12306.cn/index/images/pic/banner10.jpg",
+          "https://www.12306.cn/index/images/pic/banner11.jpg",
+          "https://www.12306.cn/index/images/pic/banner12.jpg"
+          ];
+
+          // 实例化 dialog widget
+          var slider = new SliderWidget(sliderImgs);
+          slider.startup();
+          // var container = document.getElementById("container");
+          // container.appendChild(slider);
+          var container = query("#container")[0];
+          slider.placeAt(container);
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <h1>Slider Widget</h1>
+    <hr />
+    <div id="container"></div>
+  </body>
+</html>
