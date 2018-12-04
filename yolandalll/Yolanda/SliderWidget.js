@@ -227,6 +227,7 @@ define([
 
     move() {
       this.moveHandle = setInterval(() => {
+        /**
         this.index++;
         this.slideTo(this.index);
        // console.log(this.items.length)
@@ -234,7 +235,14 @@ define([
           //console.log(this.index);
           this.index = -1;
         }
+        */
+       var items = this.items;
+       var currentIndex = this.getSelectedItemIndex();
+       var nextIndex = (currentIndex + 1) % items.length;
+       this.slideTo(nextIndex);
       }, 3000)
+       
+
     }
 
   });
