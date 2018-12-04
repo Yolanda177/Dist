@@ -187,8 +187,6 @@ define([
           this.slideTo(nextIndex);
         },
 
-
-
     bindEvent() {
       var self = this;
       // console.log(self); //也是图片项目
