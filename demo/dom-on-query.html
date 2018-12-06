@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title></title>
+  <style>
+   div {
+        border: 1px solid;
+        margin: 5px;
+        padding: 2px;
+   }
+  </style>
+  <script>
+        var dojoConfig = {
+          async: true,
+
+        };
+  </script>
+  <script src="http://localhost:8080/Dojo1142tm/dojo/dojo.js"></script>
+  <script>
+    require([
+    'dojo/request',
+    'dojo/dom',
+    'dojo/on',
+    'dojo/mouse',
+    'dojo/query',
+    'dojo/dom-class',
+    'dojo/keys',
+    'dojo/_base/lang',
+    'dojo/dom-construct',
+    'dojo/domReady!'], function(request, dom, on, mouse, query, domClass, keys, lang, domConstruct) {
+        var list1 = dom.byId("list1");
+        var three = dom.byId("three");
+
+        // 创建节点
+        // create接收四个参数：节点名，节点作为对象的属性，可选的父节点或兄弟节点，可选的位置(默认为"last")
+        domConstruct.create("li", { 
+            innerHTML: "Six",
+            style: {
+                fontWeight: "bold"
+            }
+        }, list1);
+
+        // 放置节点
+        // place接收三个参数：要放置的节点的DOM节点或字符串ID，要用作引用的
+        // 节点的DOM节点或字符串ID，作为字符串的可选位置(默认为"last")
+        function moveFirst() {
+          var list1 = dom.byId("list1");
+          var three = dom.byId("three");
+          domConstruct.place(three, list1,"first")
+        }
+        function moveBeforeTwo(){
+            var two = dom.byId("two"),
+                three = dom.byId("three");
+
+            domConstruct.place(three, two, "before");
+        }
+
+        function moveAfterFour(){
+            var four = dom.byId("four"),
+                three = dom.byId("three");
+
+            domConstruct.place(three, four, "after");
+        }
+
+        function moveLast(){
+            var list1 = dom.byId("list1"),
+                three = dom.byId("three");
+
+            domConstruct.place(three, list1);
+        }
+
+        // 注册事件
+        // on接收三个参数：元素，事件名称，处理程序
+        on(dom.byId("moveFirst"), "click", moveFirst);
+        on(dom.byId("moveBeforeTwo"), "click", moveBeforeTwo);
+        on(dom.byId("moveAfterFour"), "click", moveAfterFour);
+        on(dom.byId("moveLast"), "click", moveLast);
+
+        var myScopedButton1 = dom.byId("myScopedButton1");
+        var myScopedButton2 = dom.byId("myScopedButton2");
+        myObject = {
+            id: "myObject",
+            onClick: function(evt) {
+                alert("The scope of this handler is " + this.id);
+            }
+        };
+        // 注意，默认情况下on将在第一个参数中传递的节点的上下文中运行事件处理程序
+        // alert myScopedButton1
+        on(myScopedButton1, "click", myObject.onClick);
+
+        // lang.hitch可指定运行处理程序的上下文
+        // alert myObject
+        on(myScopedButton2, "click", lang.hitch(myObject, "onClick"));
+        
+
+        // NodeList 将事件注册到多个节点上的on方法
+        // alert button1/button3
+        query(".clickMe").on("click", myObject.onClick);
+        // alert myObject
+        query(".clickMeAlso").on("click", lang.hitch(myObject, "onClick"));
+
+        // 事件委托 on(父元素，"选择器:事件名称", 处理程序)
+        // 效果同95行
+        var div = dom.byId("parentDiv");
+        on(div, ".clickMe:click", myObject.onClick);
+
+        // key
+        on(document, "keyup", function(evt) {
+            document.getElementById("keyCode").value = event.keyCode;
+        });
+        query("input[type='text']").on("keydown", function(event) {
+            // query returns a nodeList, which has an on() function available that will 
+            // listen to all keydown events for each node in the list
+            switch(event.keyCode) {
+                case keys.UP_ARROW:
+                    event.preventDefault();
+                    // preventing the default behavior in case your browser
+                    // uses autosuggest when hit the down or up arrow
+                    console.log("up arrow has been pressed");
+                    break;
+                case keys.DOWN_ARROW:
+                    event.preventDefault();
+                    console.log("down arrow has been pressed");
+                    break;
+                case keys.ENTER:
+                console.log("enter has been pressed");
+                    break;
+                default:
+                console.log("some other key: " + event.keyCode);
+            }
+        });
+        
+        // 使用选择器语法 让查询引擎遍历所有DOM的节点
+        var odds1 = query("#list .odd"); 
+        // 将DOM节点指定为第2个参数，将查询限制为该节点及其子节点，DOM结构较大的页面采用这种方法较好
+        // odds1和odds2包含相同的元素
+        var odds2 = query(".odd", dom.byId("list"));
+
+        var list = query("#list")[0];
+        console.log(list);
+        var someA = query("li a");
+        console.log(someA);
+        var someAA = query("li.odd", dom.byId("list"));
+        console.log(someAA);
+        var somea = query("a.odd");
+        console.log(somea);
+
+        query(".odd").forEach(function(node, index, nodelist) {
+            domClass.add(node, "red");
+        });
+        // ?运行不了
+        // query(".even").addClass("blue");
+        // query(".even").style("color", "white").addClass("italic");
+    
+      });
+  </script>
+</head>
+
+<body>
+    <div id="div1">
+        <ul id="list1">
+            <li id="one">One</li>
+            <li id="two">Two</li>
+            <li id="three">Three</li>
+            <li id="four">Four</li>
+            <li id="five">Five</li>
+        </ul>
+    </div>
+
+    <div id="div2">
+        <button id="moveFirst">moveFirst</button>
+        <button id="moveBeforeTwo">Before Two</button>
+        <button id="moveAfterFour">After Four</button>
+        <button id="moveLast">The last item</button>
+    </div>
+    <div id="div3">
+        <button id="myScopedButton1">Button1</button>
+        <button id="myScopedButton2">Button2</button>
+    </div>
+    <div id="parentDiv">
+        <button id="button1" class="clickMe">Click me</button>
+        <button id="button2" class="clickMeAlso">Click me also</button>
+        <button id="button3" class="clickMe">Click me too</button>
+        <button id="button4" class="clickMeAlso">Please click me</button>
+    </div>
+    <div id="key">
+        <h3>Press any key</h3>
+        keyCode value: <input type="text" id="keyCode" size="2">
+        <h3>Press Up or Down Arrow Keys</h3>
+        <input type="text" id="input1" value="up">
+        <input type="text" id="input2" value="down">
+        <input type="submit" id="send" value="send">
+    </div>
+    <ul id="list">
+        <li class="odd">
+            <div class="bold">
+                <a class="odd">Odd</a>
+            </div>
+        </li>
+        <li class="even">
+            <div class="italic">
+                <a class="even">Even</a>
+            </div>
+        </li>
+        <li class="odd">
+            <a class="odd">Odd</a>
+        </li>
+        <li class="even">
+            <div class="bold">
+                <a class="even">Even</a>
+            </div>
+        </li>
+        <li class="odd">
+            <div class="italic">
+                <a class="odd">Odd</a>
+            </div>
+        </li>
+        <li class="even">
+            <a class="even">Even</a>
+        </li>
+    </ul>
+    
+    <ul id="list2">
+        <li class="odd">Odd</li>
+    </ul>
+
+</body>
+
+</html>
