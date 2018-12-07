@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        var dojoConfig = {
+            async: true,
+        }
+    </script>
+    <script src="http://localhost:8080/Dojo1142tm/dojo/dojo.js"></script>
+    <script>
+        
+        require([
+            'dojo/_base/lang',
+            'dojo/_base/array',
+            'dojo/dom',
+            'dojo/domReady!'
+            
+        ], function(lang, array, dom) {
+
+            var plant = {
+                species: 'tree',
+                name: 'plant',
+                location: 'shanghai',
+                }
+            
+            // mixin(dest, sources)
+            // 将一个或多个源的所有属性复制/添加到dest，返回dest
+            // 如果dest原有对应的属性则被重写，源是从左到右处理
+            var fruit = lang.mixin(plant, 
+                { 
+                    name: 'fruit',
+                    location: 'china',
+                    color: 'red',
+                    toString: function() {
+                        console.log("china red ...");
+                    }
+                },
+                {
+                    
+                    name: 'plant',
+                    location: 'guangzhou',
+                    toString: function() {
+                    console.log("guangzhou fruit");
+                    }
+                }
+            )
+            // delegate(obj, props)
+            // 返回一个新对象，它向obj'查找'它没有的属性,
+            var apple = lang.delegate(fruit, {
+                name: 'apple',
+                // color: 'blue',
+                location: 'american',
+                toString: function() {
+                    console.log("apple blue...");
+                }
+            });
+            // plant&fruit的属性一样
+            // 为 species: 'tree', name: 'fruit', location: 'china'
+            // , toString: function() {console("china red");}
+            console.log(plant);
+            console.log(fruit);
+            console.log(apple);
+            // apple属性为 name: 'apple', location: 'american', toString: function(){console("apple blue");}
+            // 下面是apple 原型对象属性
+            console.log(apple.color); // red
+            console.log(apple.location); // china
+            console.log(apple.toString); // console("china red");
+            console.log(apple.name); // fruit
+            console.log(apple.species); // tree
+ 
+
+            // lang.exists(name, obj) 返回布尔值
+            // 确定对象是否支持给定方法
+            var foo = {
+                bar: {
+                    baz: ''
+                },
+                f1: function() {
+                    console.log("barbarbar");
+                },
+                name: "some value",
+                f2: function(a, b, c) {
+                    console.log(a, b, c);
+                }
+            };
+            // search the global scope
+            console.log(lang.exists("foo.bar")); // false
+            console.log(lang.exists("foo.bar.baz")); // false
+            // search from a particular scope
+            console.log(lang.exists("bar", foo)); // true
+            console.log(lang.exists("bar.baz", foo)); // true
+            
+            // lang.extend(ctor, props) 返回扩展的类，类似mixin
+
+            // lang.getObject(name, create, context)
+            console.log(lang.getObject("foo.name")); // ?显示undefined？
+            
+            // lang.hitch(context, function)
+            // context上下文范围，返回值为function 可以通过设置context来实现访问函数外部对象的属性
+            // 在foo范围内运行function函数
+            var func = lang.hitch(foo, function() {
+                console.log(this.name);
+            });
+            func(); // some value
+
+            // 在foo范围内运行foo.f1()
+            lang.hitch(foo, "f1")(); // barbarbar
+            
+            // 先传递 1 2 然后混合3 再打印 
+            var fn = lang.hitch(foo, "f2", 1, 2);
+            fn(3); // 1 2 3 
+
+            // lang.replace(tmpl, map, pattern)
+            // 对字符串进行参数化替换，返回值为替换后的字符串
+            // 字典模式
+            console.log(lang.replace("hello, {name.first} {name.last} AKA {nick}!",
+             {
+                nick: 'Bob',
+                name: {
+                    first: 'Rovert',
+                    middle: 'X',
+                    last: 'Cringely'
+                }
+             })
+            );
+            // 数组模式
+            console.log(lang.replace("Hello, {0} {2} AKA {3}",
+             ["Robert", "X", "Crignely", "Rob"]
+            ));
+
+            // 方法模式
+            function sum(a) {
+                var t = 0;
+                array.forEach(a, function(x) {
+                    t += x;
+                });
+                return t;
+            }
+            console.log(lang.replace("{count} payments averaging {avg} USD per payment.",
+                lang.hitch(
+                    {payments: [11, 16, 12]},
+                    function(_, key) {
+                        console.log(this.payments);
+                        console.log(this);
+                        switch(key) {
+                            case "count": return this.payments.length;
+                            case "min": return Math.min.apply(Math, this.payments);
+                            case "max": return Math.max.apply(Math, this.payments);
+                            case "sum": return sum(this.payments);
+                            case "avg": return sum(this.payments) / this.payments.length;
+                            
+                        }
+                    }
+                )
+            ));
+
+            // lang.setObject(name, value, context)
+            console.log(lang.setObject("foo.name", "abc"));
+
+            // lang.trim(str) 返回值为修剪后的str
+            function show(str) {
+                return "|" + lang.trim(str) + "|";
+            }
+            console.log(show(" one "));
+            console.log(show("\tfour\r\n"));
+            console.log(show("\f\n\r\t\vF I V E\f\n\r\t\v"));
+
+        });
+    </script>
+</head>
+<body>
+
+    
+</body>
+</html>
