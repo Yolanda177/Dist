@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <title>运维监控平台</title>
+        <link rel="stylesheet" href="./widget/css/xiaozhiMain.css">
+	</head>
+	<body>
+		<div id="main"></div>
+		<script>
+			var baseUrl = "http://localhost:8080/Dojo1142tm"
+			var dojoConfig = {
+			  async: true,
+			  packages: [
+				{
+				  name: "Yolanda",
+				  location:
+					location.pathname.replace(/\/[^/]*$/, "") + "/Yolanda"
+				}
+			  ]
+			};
+		  </script>
+			<script src="http://localhost:8080/Dojo1142tm/dojo/dojo.js"></script>
+		  <script>
+			  require([
+				  'dojo/dom',
+				  'dojo/query',
+				  'dojo/dom-construct',
+				  'dojo/ready',
+			    'Yolanda/EchartsWidget',
+				  'dojo/domReady!'
+			  ], function(dom, query, domConstruct, ready, EchartsWidget) {
+		        ready(function(){
+				var widget = new EchartsWidget();
+				widget.startup();
+				});
+			});
+		  </script>
+	</body>
+</html>

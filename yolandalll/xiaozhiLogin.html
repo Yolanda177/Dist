@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Log in</title>
+	<style>
+		body{
+			background-color: #193257;
+		}
+		h1{
+				text-align: center;
+				margin-top: 200px;
+				color: rgb(104, 177, 236);
+		}
+		form{
+				text-align: center;
+		}
+		#userName, #userPwd{
+				width: 250px;
+				height: 30px;
+				margin: 0px 20px;
+				color: #999;
+				content: 'yonghuming';
+				border: 1px solid #999;
+				background-color: #2e3b50;
+				background-color:rgba(0,0,0,0);
+		}
+		#submit{
+				width: 80px;
+				height: 30px;
+				margin: 0px 20px;
+				border: 1px #efefef;
+		}
+	</style>
+</head>
+<body>
+	<div>
+	<h1>规划小智运营监控平台</h1>
+	<form name="input" action="xiaozhiMain.html" method="GET" onsubmit="return check()">
+		<input id="userName" type="text" placeholder="用户名" onchange="checkName()" />
+		<input id="userPwd" type="password" placeholder="密码" onchange="checkPwd()" />
+		<input id="submit" type="submit" value="go" />
+	</form>
+	</div>
+	<script>
+		function checkName() {
+			var check = false;
+			var userName = document.getElementById("userName").value;
+			if(userName.length == 0) {
+				alert("用户名不能为空");
+				check = false;
+			} else {
+				check = true;
+			}
+			return check;
+		}
+		function checkPwd() {
+			var check = false;
+			var userPwd = document.getElementById("userPwd").value;
+			if(userPwd.length == 0) {
+				alert("密码不能为空");
+				check = false;
+			} else {
+				check = true;
+			}
+			return check;
+		}
+		function check() {
+			var check = checkName() && checkPwd();
+			return check;
+		}
+	</script>
+</body>
+</html>
