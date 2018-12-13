@@ -47,13 +47,3 @@ declare函数接收以下参数，创建类
 加载器维护对每个模块的引用，因此下次请求模块时，加载器将返回现有引用。
 4. 加载AMD模块时，代码将插入到`script`页面上的新元素中，从而导致`define`调用该函数。与上面相同的过程恰好加载传递给的任何依赖项`define`，然后加载器对模块的引用设置为您传递给的工厂函数返回的值`define`。（如果传递的是值而不是函数`define`，则加载器对模块的引用将设置为该值。）
 
-framworklearning
-    Dojo
-        demo
-            dialog.html
-        asset
-            dojo
-                dojo.js
-            linjy
-                widget
-                    Dialoa.js
