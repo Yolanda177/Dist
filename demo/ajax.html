@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+    <script>
+        // function loadXMLDoc() {
+        //     var xmlhttp;
+        //     xmlhttp = new XMLHttpRequest();
+        //     xmlhttp.onreadystatechange = function () {
+        //         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        //             document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+        //         }
+        //     }
+        //     xmlhttp.open("GET", "./123.txt", true);
+        //     xmlhttp.send();
+        // }
+        function loadXMLDoc(url)
+        {
+          var xmlhttp;
+          var txt, x, xx, i;
+          if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+          }
+          else {// code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+          xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+              txt = "<table border='1'><tr><th>Title</th><th>Artist</th></tr>";
+              x = xmlhttp.responseXML.documentElement.getElementsByTagName("CD");
+              for (i = 0; i < x.length; i++) {
+                txt = txt + "<tr>";
+                xx = x[i].getElementsByTagName("TITLE");
+                {
+                  try {
+                    txt = txt + "<td>" + xx[0].firstChild.nodeValue + "</td>";
+                  }
+                  catch (er) {
+                    txt = txt + "<td> </td>";
+                  }
+                }
+                xx = x[i].getElementsByTagName("ARTIST");
+                {
+                  try {
+                    txt = txt + "<td>" + xx[0].firstChild.nodeValue + "</td>";
+                  }
+                  catch (er) {
+                    txt = txt + "<td> </td>";
+                  }
+                }
+                txt = txt + "</tr>";
+              }
+              txt = txt + "</table>";
+              document.getElementById('txtCDInfo').innerHTML = txt;
+            }
+          }
+          xmlhttp.open("GET", url, true);
+          xmlhttp.send();
+        }
+
+        function myFunction() {
+            var attr = document.getElementById("action");
+            console.log(attr.childNodes); // NodeList(6)[text, li, text, li, text, li]
+            console.log(attr.childNodes[0]); // #text
+            console.log(attr.childNodes[0].nodeValue); // 空白
+            console.log(attr.firstChild.nodeValue); // 空白
+            console.log(attr.childNodes[1].firstChild.nodeValue); // 第一个
+            console.log(attr.childNodes[5].firstChild); // <p>p里的文字</p>
+            console.log(attr.childNodes[5].firstChild.nodeValue); // null
+            console.log(attr.firstChild); // #text
+            console.log(attr.lastChild); // <li title="第三段文字"><p>p里的文字</p></l>
+        }
+        
+        function sendAjax() {
+          var xhr = new XMLHttpRequest();
+          //向 server 端获取一张图片
+          xhr.open('GET', '/yolandalll/widget/images/pc1.jpg', true);
+
+          // 这行是关键！
+          //将响应数据按照纯文本格式来解析，字符集替换为用户自己定义的字符集
+          xhr.overrideMimeType('text/plain; charset=x-user-defined');
+
+          xhr.onreadystatechange = function (e) {
+            if (this.readyState == 4 && this.status == 200) {
+              //通过 responseText 来获取图片文件对应的二进制字符串
+              var binStr = this.responseText;
+              //然后自己再想方法将逐个字节还原为二进制数据
+              for (var i = 0, len = binStr.length; i < len; ++i) {
+                var c = binStr.charCodeAt(i);
+                //String.fromCharCode(c & 0xff);
+                var byte = c & 0xff;
+              }
+
+            }
+
+          };
+
+          xhr.send();
+        }
+        
+    </script>
+    <div id="myDiv">
+        <h2>使用ajax修改文本内容</h2>
+    </div>
+    <button type="button" onclick="loadXMLDoc()"> 修改内容</button>
+    <h3>Start typing a name in the input field below:</h3>
+    <form action="">
+        First name: <input type="text" id="txt1" onkeyup="showHint(this.value)" />
+    </form>
+    <p>Suggestions: <span id="txtHint"></span></p>
+    <form action="">
+        <select name="customers" onchange="showCustomer(this.value)" style="font-family:Verdana, Arial, Helvetica, sans-serif;">
+            <option value="APPLE">Apple Computer, Inc.</option>
+            <option value="BAIDU ">BAIDU, Inc</option>
+            <option value="Canon">Canon USA, Inc.</option>
+            <option value="Google">Google, Inc.</option>
+            <option value="Nokia">Nokia Corporation</option>
+            <option value="SONY">Sony Corporation of America</option>
+        </select>
+    </form>
+    <br>
+    <div id="txtHint">Customer info will be listed here...</div>
+    <ul id="action">
+        <li title="第一段文字">第一个</li>
+        <li title="第二段文字">第二个</li>
+        <li title="第三段文字">
+            <p>p里的文字</p>
+            </l>
+    </ul>
+    <button onclick="myFunction()">1</button>
+    <div id="txtCDInfo">
+        <button onclick="loadXMLDoc('./cd_catalog.xml')">Get CD info</button>
+    </div>
+    <div id="loadImg">未加载图片前</div>
+</body>
+
+
+</html>

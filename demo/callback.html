@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script>
+        function fn(url, callback) {
+            var httpRequest;
+            httpRequest = new XMLHttpRequest();
+            httpRequest.onreadystatechange = function () {
+                if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    callback.call(httpRequest.responseXML); // 在httpRequest.responseXML的上下文调用回调函数
+                }
+            };
+            httpRequest.open("GET", url);
+            httpRequest.send();
+        }
+        fn("text.html", function () {
+            console.log(this);
+        });
+        console.log("this will run before the above callback"); // 先输出，因为回调函数需要等待请求完成才执行
+
+        function foo() {
+            var a = 10;
+            return function () {
+                a *= 2;
+                return a;
+            };
+        }
+        var f = foo();
+        console.log(f()); // 20
+        console.log(f()); // 40 作用域被留下
+
+        function a(callback) {
+            console.log("this is the parent Function of a");
+            var m = 1;
+            var n = 3;
+            return callback(m, n);
+
+        }
+
+        function b(m, n) {
+            console.log("this is a callback Function b");
+            return m + n;
+        }
+
+        function c() {
+            var result = a(b);
+            console.log("result=" + result);
+        }
+        c();
+        // 执行顺序
+        // this is the parent Function of a
+        //  this is a callback Function b
+        // result=4
+
+        function A(callback) {
+            console.log("执行A函数");
+            setTimeout(function () {
+                console.log("执行A的延迟函数");
+            }, 1000);
+            callback();
+        }
+
+        function B() {
+            console.log("执行A的回调B函数");
+        }
+
+        function C() {
+            setTimeout(function () {
+                console.log("执行C的延迟函数");
+            })
+        }
+
+        function D() {
+            console.log("执行D函数");
+        }
+        C();
+        A(B);
+        D();
+
+        // 执行顺序 
+        // 执行A函数
+        // 执行A的回调B函数
+        // 执行C的延迟函数
+        // 执行A的延迟函数
+
+        var allUserData = [];
+
+        function logStuff(userData) {
+            if (typeof userData === "string") {
+                console.log(userData);
+            } else if (typeof userData === "object") {
+                for (var item in userData) {
+                    console.log(item + ":" + userData[item]);
+                }
+            }
+        }
+        function getInput(options, callback) {
+            allUserData.push(options);
+            callback(options);
+        }
+        getInput({name: "Rich", speciality: "JavaScript"}, logStuff);
+
+
+        var clientData = {
+            id: 094554,
+            fullName: "Not Set",
+            setUserName: function(firstName, lastName) {
+                this.fullName = firstName + " " + lastName;
+            }
+        }
+        function getUserInput(firstName, lastName, callback) {
+            callback.call(clientData, firstName, lastName);
+        }
+        getUserInput("Barack", "Obama", clientData.setUserName);
+        console.log(clientData.fullName);
+        // console.log(window.fullName);
+        var form = document.forms.namedItem("fileinfo");
+        form.addEventListener('submit', function(ev) {
+
+            var oOutput = document.querySelector("div"),
+                oData = new FormData(form);
+
+            oData.append("CustomField", "This is some extra data");
+
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "./123.txt", true);
+            oReq.onload = function (oEvent) {
+                if (oReq.status == 200) {
+                    oOutput.innerHTML = "Uploaded!";
+                } else {
+                    oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
+                }
+            };
+
+            oReq.send(oData);
+            ev.preventDefault();
+        }, false);
+
+
+
+    </script>
+    <form enctype="multipart/form-data" method="post" name="fileinfo">
+        <label>Your email address:</label>
+        <input type="email" autocomplete="on" autofocus name="userid" placeholder="email" required size="32" maxlength="64" /><br />
+        <label>Custom file label:</label>
+        <input type="text" name="filelabel" size="12" maxlength="32" /><br />
+        <label>File to stash:</label>
+        <input type="file" name="file" required />
+        <input type="submit" value="Stash the file!" />
+    </form>
+    <div></div>
+        
+        
+
+    </form>
+</body>
+
+</html>
