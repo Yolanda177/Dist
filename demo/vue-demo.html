@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <div id="app">
+        {{ message }}
+    </div>
+    <div id="app-2">
+        <span v-bind:title="message">
+            鼠标悬停几秒钟查看此处动态绑定的提示信息！
+        </span>
+    </div>
+    <div id="app-3">
+        <span v-if="seen"> Now you see me</span>
+    </div>
+    <div id="app-4">
+        <ol>
+            <li v-for="todo in todos">
+                {{ todo.text }}
+            </li>
+        </ol>
+    </div>
+    <div id="app-5">
+        <p>{{ message }}</p>
+        <button v-on:click="reverseMessage">reverseMessage</button>
+    </div>
+    <div id="app-6">
+        <p>{{ message }}</p>
+        <input v-model="message">
+    </div>
+    <div id="app-7">
+        <ol>
+            <!-- 创建一个 todo-item 组件的实例 -->
+            <todo-item v-for="item in groceryList" v-bind:todo="item" v-bind:id="'list-' + item.id" v-bind:key="item.id">
+            </todo-item>
+        </ol>
+    </div>
+    <div id="example">
+        <p>{{ a }}</p>
+    </div>
+    <div id="app-8">
+        <p>Using mustaches: {{ rawHtml }}</p>
+        <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+    </div>
+    <div id="app-9">
+        <p>Original message: "{{ message }}"</p>
+        <p>Computed reversed message: "{{ reverseMessage }}"</p>
+        <p>Reversed message: "{{ reverseMessage2() }}"</p>
+        <p>Date Now: "{{ now }}"</p>
+        <p>DateNow: "{{ now2() }}"</p>
+    </div>
+    <div id="app-10">
+        <p>FullName: "{{ fullName }}"</p>
+    </div>
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question:
+            <input v-model="question">
+        </p>
+        <p>{{ answer }}</p>
+    </div>
+    <!-- 动态切换class -->
+    <div class="static" 
+         :class="classObject">
+    </div>
+    <!-- 如果原本没有class属性 如何获取DOM节点添加class -->
+    <div v-bind:class="[activeClass, errorClass]"></div>
+    <template v-if="ok">
+        <h1>Title</h1>
+        <p>Paragraph 1</p>
+        <p>Paragraph 2</p>
+    </template>
+    
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            }
+        });
+        app.message = 'I have change the vue ';
+        var app2 = new Vue({
+            el: '#app-2',
+            data: {
+                message: '页面加载于 ' + new Date().toLocaleString()
+            }
+        });
+        var app3 = new Vue({
+            el: '#app-3',
+            data: {
+                seen: true
+            }
+        });
+        app3.seen = false;
+        var app4 = new Vue({
+            el: '#app-4',
+            data: {
+                todos: [{
+                        text: 'learning JavaScript'
+                    },
+                    {
+                        text: 'learning Vue'
+                    },
+                    {
+                        text: 'the whole project'
+                    }
+                ]
+            }
+        });
+        app4.todos.push({
+            text: 'new Project'
+        });
+        var app5 = new Vue({
+            el: '#app-5',
+            data: {
+                message: 'Hello Vue!'
+            },
+            methods: {
+                reverseMessage: function () {
+                    this.message = this.message.split('').reverse().join('')
+                }
+            }
+
+        });
+        var app6 = new Vue({
+            el: '#app-6',
+            data: {
+                message: 'Hello Vue!'
+            }
+        });
+        // 注册组件
+        Vue.component('todo-item', {
+            // todo-item 组件现在接受一个
+            // "prop"，类似于一个自定义的特性
+            // 这个 prop 名为 todo
+            props: ['todo'],
+            template: '<li>{{todo.text}}</li>'
+        });
+        var app7 = new Vue({
+            el: '#app-7',
+            data: {
+                groceryList: [{
+                        id: 0,
+                        text: '蔬菜'
+                    },
+                    {
+                        id: 1,
+                        text: '奶酪'
+                    },
+                    {
+                        id: 2,
+                        text: '水果'
+                    }
+                ]
+            }
+        });
+        var app8 = new Vue({
+            el: '#app-8',
+            data: {
+                rawHtml: "<span style='color: red'>This should be red.</span>"
+            }
+        });
+        var data = {
+            a: 1
+        };
+        var vm = new Vue({
+            el: '#example',
+            data: data,
+            newTodoText: '',
+            visitCount: 0,
+            hideCompletedTodos: false,
+            todos: [],
+            error: null,
+            created: function () {
+                // 实例创建之后就执行
+                console.log('a is: ' + this.a); // a is: 1
+            },
+        });
+        console.log(vm.$data === data); // true
+        console.log(vm.$el === document.getElementById('example'));
+        // 命令式
+        vm.$watch('a', function (newValue, oldValue) {
+            // 该回调方法将在 vm.a 改变后调用
+            this.a = 4;
+        })
+        console.log(vm.a == data.a); // true
+        console.log(vm.a);
+        vm.a = 2;
+        console.log(data.a);
+        var app9 = new Vue({
+            el: '#app-9',
+            data: {
+                message: 'Hello'
+            },
+            computed: {
+                reverseMessage: function () {
+                    return this.message.split('').reverse().join('')
+                },
+                now: function () {
+                    return Date.now()
+                }
+            },
+            methods: {
+                reverseMessage2: function () {
+                    return this.message.split('').reverse().join('')
+                },
+                now2: function () {
+                    return Date.now()
+                }
+            }
+        });
+        app9.message = '123456';
+        var app10 = new Vue({
+            el: '#app-10',
+            data: {
+                firstName: 'Foo',
+                lastName: 'Bar'
+            },
+            computed: {
+                fullName: {
+                    get: function () {
+                        return this.firstName + ' ' + this.lastName
+                    },
+                    set: function (newValue) {
+                        var names = newValue.split(' ');
+                        this.firstName = names[0];
+                        this.lastName = names[names.length - 1]
+                    }
+                }
+            }
+        });
+        app10.fullName = 'Miko L';
+
+        var watchWxampleVM = new Vue({
+            el: '#watch-example',
+            data: {
+                question: '',
+                answer: 'I cannot give you an answer until you ask a question!'
+            },
+            watch: {
+                // 如果 `question` 发生改变，这个函数就会运行
+                question: function (newQuestion, oldQuestion) {
+                    this.answer = 'Waiting for you to stop typing...'
+                    this.debouncedGetAnswer()
+                }
+            },
+            created: function () {
+                // 创建实例时就调用
+                this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+            },
+            methods: {
+                getAnswer: function () {
+                    if (this.question.indexOf('?') === -1) {
+                        this.answer = 'Questions usually contain a queston mark. ;-'
+                        return
+                    }
+                    this.answer = 'Thinking...'
+                    var vm = this
+                    axios.get('https://yesno.wtf/api')
+                        .then(function (response) {
+                            vm.answer = _.capitalize(response.data.answer)
+                        })
+                        .catch(function (error) {
+                            vm.answer = 'Error! Could not reach the API.' + error
+                        })
+                }
+            }
+        })
+        var bindClass = new Vue({
+            el: '.static',
+            data: {
+                isActive: true,
+                hasError: false
+            },
+            computed: {
+                classObject: function () {
+                    return {
+                        active: this.isActive && !this.hasError,
+                        'text-danger': !this.hasError && this.isActive
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script>
+        var dojoConfig = {
+            async: true
+        };
+    </script>
+    <script src="http://localhost:8080/Dojo1142tm/dojo/dojo.js"></script>
+    <script>
+        require([
+            "dojo/Deferred",
+            "dojo/dom",
+            "dojo/on",
+            "dojo/domReady!"
+        ], function (Deferred, dom, on) {
+            function asyncProcess(msg) {
+                var deferred = new Deferred();
+                dom.byId("output").innerHTML += "<br />I'm running";
+                console.log("main order");
+                setTimeout(function() {
+                    deferred.resolve(msg);
+                    console.log("settimeout order");
+                }, 1000);
+                console.log("after settimeout order");
+                return deferred.promise;
+            }
+            on(dom.byId("startButton"), "click", function() {
+                console.log("click1 order");
+                // var process = asyncProcess(); // 决定何时调用asyncProcess？
+                var process = asyncProcess("first");
+                console.log("click2 order");
+                process.then(function(results) {
+                    dom.byId("output").innerHTML += "<br />I'm finished, and the result was: " + results;
+                    console.log(".then first order");
+                    return asyncProcess("second")
+                }).then(function(results) {
+                    dom.byId("output").innerHTML += "<br />I'm really finished now, and the result was: "+ results;
+                    console.log(".then second order");
+                });
+            });
+            
+            function asyncProcess2(msg){
+
+                var deferred = new Deferred();
+
+                dom.byId("output2").innerHTML += "<br/>I'm running...";
+
+                setTimeout(function(){
+                    console.log("settimeout progress halfway");
+                    deferred.progress("progress"); // 触发then里的progback
+                    // console.log("settimeout progress halfway");
+                }, 1500);
+
+                setTimeout(function(){
+                    deferred.resolve("resolve");
+                    console.log("settimeout resolve finished");
+                }, 2500);
+
+                setTimeout(function(){
+                    deferred.reject("reject"); // 触发then里的errback
+                    console.log("settimeout reject ooops");
+                }, 2000);
+
+                return deferred.promise;
+        }
+            on(dom.byId("startButton2"), "click", function(){
+                var process = asyncProcess2();
+                process.then(function(results){
+                    dom.byId("output2").innerHTML += "<br/>I'm finished, and the result was: " + results;
+                    console.log("callback");
+                }, function(errback){
+                    dom.byId("output2").innerHTML += "<br/>I errored out with: " + errback;
+                    console.log("err");
+                }, function(progback){
+                    dom.byId("output2").innerHTML += "<br/>I made some progress: " + progback;
+                    console.log("progress");
+                });
+            });
+        });
+    </script>
+    <h1>Output:</h1>
+    <div id="output">Not yet started.</div>
+    <button type="button" id="startButton">Start</button>
+    <h1>Output2:</h1>
+    <div id="output2">Not yet started.</div>
+    <button type="button" id="startButton2">Start</button>
+</body>
+
+</html>
