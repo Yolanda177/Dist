@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div id="example-1">
+        <button @click="counter += 1">Add 1</button>
+        <p>The button above has been clicked {{ counter }} times</p>
+    </div>
+    <div id="example-2">
+        <button @click="greet">Greet</button>
+    </div>
+    <div id="example-3">
+        <button @click="warn('Form cannot be submitted yet.', $event)">Submit</button>
+    </div>
+    <div id="example-4">
+        <button @click="getEventDom($event)">getEventDom</button>
+        <br />
+        <table>
+            <tr @click="show3" >
+                <td @click="show2"><span @click="show1">冒泡事件测试</span></td>
+            </tr>
+        </table>
+        <br />
+        <div @click.capture="outDivClick" style="width: 200px; height: 200px; background-color: #FF0000;">
+            <div @click="innerDivClick" style="width: 100px; height: 100px; background-color: azure;"></div>
+        </div>
+        <br />
+        <input @keyup.enter="enter" />
+        <br />
+        <div @click.ctrl="ctrlClick">Ctrl + Click</div>
+        <input @keyup.alt.67="clear" />
+
+        
+    </div>
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var example4 = new Vue({
+            el: '#example-4',
+            data:{
+            },
+            methods: {
+                getEventDom: function (evt) {
+                    evt.preventDefault();
+                    alert(evt);
+                },
+                show1: function () {
+                    alert("span alert")
+                },
+                show2: function () {
+                    alert("td alert")
+                },
+                show3: function () {
+                    alert("tr alert")
+                },
+                outDivClick: function () {
+                    alert("outDiv")
+                },
+                innerDivClick: function () {
+                    alert("innerDiv")
+                },
+                enter: function () {
+                    alert("enter")
+                },
+                ctrlClick: function () {
+                    alert("ctrl+Click")
+                },
+                clear: function () {
+                    alert("clear")
+                }
+            }
+        });
+        var example3 = new Vue({
+            el: '#example-3',
+            methods: {
+                warn: function (message, evt) {
+                    if (evt) {
+                        evt.preventDefault();
+                        alert(message);
+                        console.log(evt);
+                    }
+                }
+            }
+        })
+        var example2 = new Vue({
+            el: '#example-2',
+            data: {
+                name: 'Vue.js'
+            },
+            methods: {
+                greet: function (evt) {
+                    alert('Hello ' + this.name + '!');
+                    if (evt) {
+                        alert(evt.target.tagName)
+                    }
+                }
+            }
+        })
+        var example1 = new Vue({
+            el: '#example-1',
+            data: {
+                counter: 0
+            }
+        })
+    </script>
+</body>
+
+</html>
