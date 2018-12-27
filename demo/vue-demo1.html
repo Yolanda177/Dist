@@ -73,7 +73,7 @@
     <div class="static" :class="classObject">
     </div>
     <!-- 如果原本没有class属性 如何获取DOM节点添加class -->
-    <div v-bind:class="[activeClass, errorClass]"></div>
+    <div id="addClass" :class="{ active: true, 'error': true}">addClass</div>
     <div id="template">
         <template v-if="isShow">
             <h1>Title</h1>
@@ -118,15 +118,15 @@
             <button>Add</button>
         </form>
         <ul>
-            <li is="todo-item2" v-for="(todo, index) in todos" :key="todo.id" :title="todo.title" @remove="todos.splice(index, 1)"></li>
+            <li is="todo-item2" v-for="(todo, index) in todos" :key="todo.id" :item="todo" @remove="todos.splice(index, 1)"></li>
         </ul>
     </div>
     <script>
         Vue.component("todo-item2", {
-            props: ['title'],
+            props: ['item'],
             template: '\
                 <li>\
-                {{ title }}\
+                {{ item.title }}\
                 <button @click="$emit(\'remove\')">Remove</button>\
                 </li>\
                 '
@@ -363,18 +363,28 @@
         var bindClass = new Vue({
             el: '.static',
             data: {
-                isActive: true,
-                hasError: false
+                // classObject: {
+                    isActive: true,
+                    hasError: false
+                // }
+
             },
             computed: {
                 classObject: function () {
                     return {
                         active: this.isActive && !this.hasError,
-                        'text-danger': !this.hasError && this.isActive
+                        'text-danger': !this.hasError
                     }
                 }
             }
         });
+        var addClass = new Vue({
+            el: '#addClass',
+            data: {
+                activeClass: true,
+                errorClass: false
+            }
+        })
         var app11 = new Vue({
             el: '#app-11',
             data: {

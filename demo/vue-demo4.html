@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+    <div id="emit-example">
+        <welcome-button @welcome="sayHi"></welcome-button>
+    </div>
+    <div id="emit-example-argument">
+        <magic-eight-ball @give-advice="showAdvice"></magic-eight-ball>
+    </div>
+    <div id="baseCheck">
+        <base-check-box v-model="lovingVue"></base-check-box>
+        <p>isOn: {{ lovingVue }}</p>
+    </div>
+    <div id="app">
+        <!-- 没有被props接收的数据会直接绑定到组件元素上 如bbb -->
+        <child-component @change="doSomgthing" :aaa="333" :bbb="444"></child-component>
+    </div>
+    <div id="example">
+        <my-button @message="handleMessae"></my-button>
+    </div>
+    <div id="counter-event-example">
+        <p>{{ total }}</p>
+        <button-counter @increment1="incrementTotal1"></button-counter>
+        <button-counter @increment2="incrementTotal2"></button-counter>
+    </div>
+    
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('button-counter', {
+            template: `<button @click="increment">{{ counter }}</button>`,
+            data: function () {
+                return {
+                    counter: 0
+                }
+            },
+            methods: {
+                increment: function () {
+                    this.counter+= 1;
+                    this.$emit('increment1', 'this place can add arg');
+                    this.$emit('increment2');
+                }
+            }
+        })
+        new Vue({
+            el: '#counter-event-example',
+            data: {
+                total: 0
+            },
+            methods: {
+                incrementTotal1: function (e) {
+                    this.total +=1;
+                    console.log(e);
+                },
+                incrementTotal2: function () {
+                    this.total +=1;
+                }
+            }
+        })
+        Vue.component('my-button', {
+            template:`<div> <button @click="$emit('message','v1','v2')">Send</button></div>`,
+        });
+        var ex = new Vue({
+            el: '#example',
+            data: {
+               message: []
+            },
+            methods: {
+                handleMessae (p1,p2) {
+                    console.log(p1);
+                    console.log(p2);
+                }
+            }
+        })
+        Vue.component('child-component', {
+            props: ['aaa'],
+            template: `<input @click="$emit('change','nihao!')" class="child-input" >`,
+
+        })
+        var app = new Vue({
+            el: '#app',
+            data: {
+                aaa: '111',
+                bbb: '222'
+            },
+            methods: {
+                doSomgthing: function (msg) {
+                    alert(msg)
+                }
+            }
+        });
+
+        Vue.component('base-check-box', {
+            model: {
+                prop: 'checked',
+                event: 'change'
+            },
+            props: ['checked'],
+            template: `
+            <input
+              type="checkbox"
+              :checked="checked"
+              @change="$emit('change', $event.target.checked)">
+            `
+        });
+        var baseCheck = new Vue({
+            el: '#baseCheck',
+            data: {
+                lovingVue: 'true'
+            }
+        })
+        Vue.component('magic-eight-ball', {
+            data: function () {
+                return {
+                    possibleAdivice: ['Yes', 'No', 'Maybe']
+                }
+            },
+            methods: {
+                giveAdvice: function () {
+                    var randomAdviceIndex = Math.floor(Math.random() * this.possibleAdivice.length);
+                    this.$emit('give-advice', this.possibleAdivice[randomAdviceIndex])
+                    console.log(randomAdviceIndex);
+                }
+            },
+            template: `
+            <button @click="giveAdvice">Click me for advice</button>
+            `
+        });
+        new Vue({
+            el: '#emit-example-argument',
+            methods: {
+                showAdvice: function (advice) {
+                    alert(advice);
+                }
+            }
+        })
+        Vue.component('welcome-button', {
+            template: `
+            <button @click="$emit('welcome')">Click me to be welcomed</button>
+            `
+        });
+        new Vue({
+            el: '#emit-example',
+            methods: {
+                sayHi: function () {
+                    alert('Hi!');
+                }
+            },
+        })
+    </script>
+</body>
+</html>
