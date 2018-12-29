@@ -1,0 +1,49 @@
+.tab-button {
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding: 6px 10px;
+    
+}
+.tab-button:hover {
+    background: #e68989;
+}
+.tab-button.active {
+    background: #e68989;
+}
+.tab {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.posts-tab {
+    display: flex;
+}
+.posts-siderbar {
+    list-style: none;
+    border-right: 1px  solid #ccc;
+    padding: 0 10px 0 0;
+    margin: 0;
+    max-width: 10vw;
+}
+.posts-siderbar li {
+    white-space: nowrap;
+    /* 显示省略号来代表被修剪的文本 */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+}
+.posts-siderbar li:hover {
+    background: #eee;
+}
+.posts-siderbar li.selected {
+    background: lightblue;
+}
+.selected-post-container {
+    padding-left: 10px;
+}
+.selected-post > :first-child {
+    margin-top: 0;
+    padding-top: 0;
+}

@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body>
 
+<body>
     <div id="emit-example">
         <welcome-button @welcome="sayHi"></welcome-button>
     </div>
@@ -30,10 +31,359 @@
         <button-counter @increment1="incrementTotal1"></button-counter>
         <button-counter @increment2="incrementTotal2"></button-counter>
     </div>
-    
+    <div id="slot-demo">
+        <base-layout>
+            <template slot="header">
+                <h1>Here might be a page title</h1>
+                <h2>Second title</h2>
+            </template>
+            <p>A paragraph fpr the main content</p>
+            <p>And another one.</p>
+            <template slot="footer">
+                <p>Here is some contact info</p>
+            </template>
+            <!-- 如果父组件为button覆写其他内容，则会覆盖默认内容Submit -->
+            <template slot="button"></template>
+        </base-layout>
+    </div>
+    <!-- 父组件的内容传到子组件中 -->
+    <div id="fathercomp">
+        <child-comp>
+            <span>我是父组件的文字，但是我要被放到子组件里</span>
+        </child-comp>
+    </div>
+    <!-- 子组件的数据传到父组件中 -->
+    <div id="fathercomp2">
+        <h2>fathercomp2</h2>
+        <!--  父组件的ftodos绑定了子组件的ctodos -->
+        <child-comp2 :ctodos="ftodos">
+            <!-- template上的属性slot-scope与slo上的属性data对应，而data绑定了ctodo -->
+            <template slot-scope="slotProps">
+                <span v-if="slotProps.data.isTrue">√</span>
+                <p>{{ slotProps.data.text }}</p>
+            </template>
+        </child-comp2>
+    </div>
+    <div id="test">
+        <say-hi>
+            <!-- slot-scope的属性值(b)对应slot上的属性(data)的键值对 -->
+            <template slot-scope="slotProps">
+                <p>{{ slotProps }}</p>
+                <p>{{ slotProps.sayHi }}</p>
+            </template>
+        </say-hi>
+    </div>
+    <div id="demo">
+        <div>
+            <h3>1.单个插槽</h3>
+            <single-slot></single-slot>
+        </div>
+        <muli-slots>
+            <h3 slot="header">2.多个插槽/具名插槽</h3>
+            <p>main content</p>
+            <p>Another paragraph</p>
+            <h3 slot="footer">There are some infomations</h3>
+        </muli-slots>
+        <div class="parent">
+            <h3>3. 作用域插槽</h3>
+            <scoped-slot>
+                <template slot-scope="props">
+                    <span>this is from parent component</span>
+                    <span>{{ props.msg }}</span>
+                </template>
+            </scoped-slot>
+        </div>
+        <!-- 父组件通过props向子组件传值 -->
+        <div class="parent">
+            <h3>4. 父组件通过props向子组件传值，值在template的slot标签上接收</h3>
+            <!-- 传递的值需要写在子组件标签上 -->
+            <father-to-child msg1="firstmsg" msg2="secondmsg"></father-to-child>
+        </div>
+    </div>
+    <!-- <script id="my-list" type="text/x-template">
+        <div class="my-list">
+                <div class="title">{{ title }}</div>
+                    <div class="list">
+                        <div v-for="item in items">
+                            <slot v-bind="item"></slot>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </script> -->
+    <!-- 作用域插槽 -->
+    <div id="test2">
+        <my-list title="Shapes" :items="shapes">
+            <template slot-scope="shape">
+                {{ shape.name }} <small>({{ shape.sides }})</small>
+            </template>
+        </my-list>
+
+        <my-list title="Colors" :items="colors">
+            <template slot-scope="color">
+                <div class="swatch" :style="{ background: color.hex }"></div>
+                <div>{{ color.name }}</div>
+            </template>
+        </my-list>
+    </div>
+    <div id="test3">
+        <child-to-father>
+            <template slot-scope="item">
+                {{ item.name }}
+            </template>
+        </child-to-father>
+    </div>
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
+        Vue.component('child-to-father', {
+            
+            data: function () {
+                return {
+                    todos: [
+                        { name: 'Aby', id: 1 },
+                        { name: 'Baby', id: 2 },
+                        { name: 'Cily', id: 3}
+                    ]
+                }
+            },
+            template:`
+            <div>
+                <ul>
+                    <li v-for="todo in todos" :key="todo.id">
+                        <slot v-bind="todo">{{ todo.name }}</slot>
+                        
+                    </li>
+                </ul>
+            </div>
+            `,
+        })
+        new Vue({
+            el: '#test3'
+        })
+        Vue.component('my-list', {
+            template: `
+            <div class="my-list">
+                <div class="title">{{ title }}</div>
+                    <div class="list">
+                        <ul>
+                            <li class="item" v-for="item in items">
+                                <slot v-bind="item"></slot>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            `,
+            props: ['title', 'items'],
+        })
+        new Vue({
+            el: '#test2',
+            data: function () {
+                return {
+                    shapes: [{
+                            name: 'Square',
+                            sides: 4
+                        },
+                        {
+                            name: 'Hexagon',
+                            sides: 5
+                        },
+                        {
+                            name: 'Triangle',
+                            sides: 3
+                        }
+                    ],
+                    colors: [{
+                            name: 'Yellow',
+                            hex: '#f4d03f'
+                        },
+                        {
+                            name: 'Green',
+                            hex: '#229954'
+                        },
+                        {
+                            name: 'Purple',
+                            hex: '#9b59b6'
+                        }
+                    ]
+                }
+            }
+        })
+        Vue.component('single-slot', {
+            template: `
+            <div>
+                <slot>如果父组件无内容则会显示该默认内容</slot>    
+            </div>
+            `
+        });
+        Vue.component('muli-slots', {
+            template: `
+            <div>
+                <header>
+                    <slot name="header"></slot>
+                </header>
+                <main> 
+                    <slot>父组件没有内容时，该默认内容会出现</slot>
+                </main>
+                <footer> 
+                    <slot name="footer"></slot> 
+                </footer>
+            </div>
+            `
+        })
+        // 作用域插槽是一种特殊类型的插槽，用作一个(能被传递数据的)可重用模板，
+        // 来代替已经渲染好的元素。
+        Vue.component('scoped-slot', {
+            template: `
+            <div class="child">
+                <slot msg="this is from child"></slot>
+            </div>
+            `
+        })
+        Vue.component('father-to-child', {
+            props: ['msg1', 'msg2'],
+            template: `
+            <div>
+                <p>{{ msg1 }}</p>
+                <p>{{ msg2 }}</p>
+            </div>
+            `
+        })
+        new Vue({
+            el: '#demo'
+        })
+        Vue.component('test-comp', {
+            template: `
+            <div>
+            <span style="color:balck">HELLO VUE</span>
+            <br />
+            <slot></slot>
+            <br />
+            <span><slot name="mySlot">这是具名插槽的默认内容(不会被不含slot属性的标签内容替换)</slot></span>
+            </div>
+            `
+        })
+        Vue.component('say-hi', {
+            template: `
+            <div><slot sayHi="Hello"></slot></div>
+            `
+        })
+        new Vue({
+            el: '#test',
+            data: {
+                lists: [{
+                        name: "A",
+                        id: 1
+                    },
+                    {
+                        name: "B",
+                        id: 2
+                    },
+                    {
+                        name: "C",
+                        id: 3
+                    }
+                ]
+            }
+        })
+        Vue.component('child-comp2', {
+            props: ['ctodos'],
+            template: `
+            <div class="hello">
+                <ul>
+                    <li v-for="ctodo in ctodos" :key="ctodo.id">
+                    
+                    <slot :data="ctodo">{{ ctodo.text }}</slot>
+                    
+                    </li>
+                </ul>
+            </div>
+            `
+        })
+        new Vue({
+            el: '#fathercomp2',
+            data: {
+                name: "fathername",
+                ftodos: [{
+                        text: 'A',
+                        id: 1,
+                        isTrue: true
+                    },
+                    {
+                        text: 'B',
+                        id: 2,
+                        isTrue: true
+                    },
+                    {
+                        text: 'C',
+                        id: 3,
+                        isTrue: false
+                    },
+                    {
+                        text: 'D',
+                        id: 4,
+                        isTrue: true
+                    }
+
+                ]
+            }
+        })
+        Vue.component('child-comp', {
+            data: function () {
+                return {
+
+                }
+            },
+            template: `
+            <div>
+                <h3>child-comp</h3>
+                <slot>123</slot>
+            </div>
+            `
+        })
+        new Vue({
+            el: '#fathercomp',
+
+        })
+
+        // 父组件模板的所有东西都会在父级作用域内编译，
+        // 子组件模板的所有东西都会在子级作用域内编译
+        Vue.component('base-layout', {
+            props: ['child'],
+            data: function () {
+                return {
+                    childname: 'miko',
+                    childage: 20
+                }
+            },
+            template: `
+            <div class="container">
+                <header>
+                    <slot name="header"></slot>
+                </header>
+                <main>
+                    <slot></slot>
+                    
+                </main>
+                <footer>
+                    <slot name="footer"></slot>
+                </footer>
+                <button>
+                    <slot name="button">Submit</slot>
+                </button>
+            </div>
+            `
+        });
+        var slotdemo = new Vue({
+            el: '#slot-demo',
+            data: {
+                fathername: 'yolanda',
+                fatherage: 21,
+                childrenname: ''
+            }
+
+        })
         Vue.component('button-counter', {
             template: `<button @click="increment">{{ counter }}</button>`,
             data: function () {
@@ -43,7 +393,7 @@
             },
             methods: {
                 increment: function () {
-                    this.counter+= 1;
+                    this.counter += 1;
                     this.$emit('increment1', 'this place can add arg');
                     this.$emit('increment2');
                 }
@@ -56,24 +406,24 @@
             },
             methods: {
                 incrementTotal1: function (e) {
-                    this.total +=1;
+                    this.total += 1;
                     console.log(e);
                 },
                 incrementTotal2: function () {
-                    this.total +=1;
+                    this.total += 1;
                 }
             }
         })
         Vue.component('my-button', {
-            template:`<div> <button @click="$emit('message','v1','v2')">Send</button></div>`,
+            template: `<div> <button @click="$emit('message','v1','v2')">Send</button></div>`,
         });
         var ex = new Vue({
             el: '#example',
             data: {
-               message: []
+                message: []
             },
             methods: {
-                handleMessae (p1,p2) {
+                handleMessae(p1, p2) {
                     console.log(p1);
                     console.log(p2);
                 }
@@ -156,4 +506,5 @@
         })
     </script>
 </body>
+
 </html>
