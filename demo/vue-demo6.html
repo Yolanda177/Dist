@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        button {
+            border: none;
+            background: #123456;
+            color: #FFFFFF;
+            cursor: pointer;    
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px auto 0 auto;
+            display: inline-block;
+            outline: none;
+            min-width: 60px;
+        }
+        .modal_body {
+            padding: 0 0 15px;
+        }
+        .modal_close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin: 0;
+            min-width: 40px;
+        }
+        .actions {
+            text-align: center;
+        }
+h1 {
+  margin: 0 0 15px;
+}
+.modal {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px 20px 40px;
+  width: 300px;
+  margin: 10px auto;
+  transform-origin: top center;
+  position: relative;
+}
+.modal-toggle-enter-active,
+.modal-toggle-leave-active {
+  transform: scale(1);
+  transition: transform 0.5s;
+}
+
+.modal-toggle-enter,
+.modal-toggle-leave-to {
+  transform: scale(0);
+}
+.modal_actions {
+  padding: 13px 26px;
+  border-top: 1px solid #efefef;
+  text-align: center;
+}
+.test-transition-enter-active,
+.test-transition-leave-active {
+    transform: scale(1);
+    transition: transform 1s;
+}
+.test-transition-enter,
+.test-transition-leave-to {
+    transform: scale(0);
+}
+    </style>
+</head>
+
+<body>
+    <div id="f-comp">
+        <get-father></get-father>
+    </div>
+    <div id="f-comp2">
+        <get-child ref="a_component"></get-child>
+        <p ref="a_p">Hello World!</p>
+        <button @click="getRef">getRef</button>
+        <my-input type="text" ref="input1" v-model="price"></my-input>
+        <p>{{ price }}</p>
+        <button @click="focus">add</button>
+    </div>
+    <div id="app1">
+        <h1 ref="message">{{ message }}</h1>
+        <button ref="myButton" @click="clickButton">点击</button>
+        <ul>
+            <li v-for="n in 10" ref="numbers">{{ n }}</li>
+        </ul>
+    </div>
+    <div id="test-div">
+        <button @click="show">click</button>
+        <transition name="test-transition">
+            <p v-show="test">使用transition和transform</p>
+        </transition>
+
+    </div>
+    <div id="app2">
+        <div class="actions">
+            <button @click="toggleModal('new-item')">添加列表</button>
+            <button @click="toggleModal('confirm')">删除列表</button>
+        </div>
+        <modal ref="new-item">
+            <p>添加新的列表</p>
+            <div slot="actions">
+                <button>保存</button>
+                <button>取消</button>
+            </div>
+        </modal>
+        <modal ref="confirm">
+            <p>删除列表？</p>
+            <div slot="actions">
+                <button>删除</button>
+                <button>取消</button>
+            </div>
+
+        </modal>
+    </div>
+    <div id="app3">
+        <stack-overflow></stack-overflow>
+    </div>
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        Vue.component('stack-overflow', {
+            data() {
+                return {
+                    message: "Hello world"
+                }
+            },
+            name: 'stack-flow',
+            template: `
+            <div>
+            <h1>Hello</h1>
+            <p>{{ message }}</p>
+            
+            </div>
+            `
+        })
+        new Vue({
+            el: '#app3',
+
+        })
+        new Vue({
+            el: '#test-div',
+            data: {
+                test: true
+            },
+            methods: {
+                show: function () {
+                    this.test = !this.test
+                }
+            }
+        })
+        Vue.component('modal', {
+            template: `
+            <transition name="modal-toggle">
+            <div class="modal" v-show="toggle">
+                <button class="modal_close" @click="close">X</button>
+                <div class="modal_body">
+                    <h1>Modal</h1>
+                    <slot>这是一个Modal的默认内容</slot>
+                    <div class="actions">
+                        <slot name="actions"></slot>
+                    </div>
+                </div>
+            </div>
+            </transition>
+            `,
+            data() {
+                return {
+                    toggle: false
+                }
+            },
+            methods: {
+                close: function () {
+                    this.toggle = false;
+                }
+            }
+        })
+        let app2 = new Vue({
+            el: '#app2',
+            methods: {
+                toggleModal: function (modal) {
+                    this.$refs[modal].toggle = !this.$refs[modal].toggle;
+                }
+            }
+        })
+        let app1 = new Vue({
+            el: '#app1',
+            data() {
+                return {
+                    message: 'HI welcome!'
+                }
+            },
+            methods: {
+                clickButton: function () {
+
+                    console.log(this.$refs);
+                    this.$refs.myButton.innerHTML = 'hello welcome'
+                }
+            }
+        })
+        setTimeout(function () {
+            app1.$refs.message.innerHTML = '延迟2000ms修改h1元素的文本'
+        }, 2000)
+        // provide 选项允许我们指定我们想要提供给后代组件的数据/方法。
+        // 然后在任何后代组件里，我们都可以使用 inject 选项来接收指定的我们想要添加在这个实例上的属性
+        Vue.component('my-input', {
+            props: ['value'],
+            template: `
+            <input :value="value" @input="$emit('input', $event.target.value)"  />
+            `,
+
+        })
+        // 在子组件上通过 ref 特性为子组件赋予一个ID引用
+        // 通过ref就能获取到子组件的data和methods
+        Vue.component('get-child', {
+            template: `<h1>{{ msg }}</h1>`,
+            data: function () {
+                return {
+                    msg: "Hello world!"
+                }
+            },
+            methods: {
+                func: function () {
+                    console.log("Fuc!");
+                }
+            }
+        })
+        var f_comp2 = new Vue({
+            el: '#f-comp2',
+            data: {
+                price: 100
+            },
+            methods: {
+                getRef: function () {
+                    console.log(this); // Vue实例
+                    console.log(this.$refs);
+                    console.log(this.$refs.a_component); // Vue子组件实例
+                    console.log(this.$refs.a_p); // <p>Hello World</p>
+                    console.log(this.$refs.a_component.msg); // 获取子组件数据
+                    console.log(this.$refs.a_component.func); // 获取子组件方法
+                    this.$refs.a_component.func();
+                },
+                focus: function () {
+                    this.$refs.input1.focus();
+                }
+            }
+        })
+        // 子组件通过 $root 属性进行访问根实例
+        // 子组件通过 $parent 属性访问父组件的实例，可代替将数据以prop方式传入子组件的方式
+        Vue.component('get-father', {
+            template: `
+            <div>
+            <div>{{ this.$root.foo }}</div>
+            <div>{{ this.$root.bar }}</div>
+            <div>{{ this.$root.baz() }}</div>
+            </div>`
+        })
+        var fcomp = new Vue({
+            el: '#f-comp',
+            data: {
+                foo: 1,
+            },
+            computed: {
+                bar: function () {
+                    return foo = 3;
+                },
+            },
+            methods: {
+                baz: function () {
+                    console.log("123");
+                }
+            }
+        })
+        setTimeout(function () {
+            fcomp.foo = 123456;
+        }, 5000);
+        // 这里会再执行一次 baz() 方法？why
+        // 打印两次123
+    </script>
+</body>
+
+</html>
